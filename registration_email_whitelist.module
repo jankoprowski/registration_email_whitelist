@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Registration Email Whitelist module.
+ */
+
+function registration_email_whitelist_validator(&$form, \Drupal\Core\Form\FormState $form_state) {
+    $mail = $form_state->getValue('mail');
+
+    $connection = \Drupal::database();
+    $mail_from_db = $connection->query("SELECT email FROM {registration_email_whitelist} WHERE email = :email", [':email' => $mail])->fetchField();
+    if (empty($mail_from_db)) {
+        $form_state->setErrorByName(
+            'mail',
+            t('E-mail is not on the white list.'),
+        );
+    }
+}
+
+function  registration_email_whitelist_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+    
+    if ($form_id === 'user_register_form') {
+        $form['#validate'][] = 'registration_email_whitelist_validator';
+    }   
+}
+

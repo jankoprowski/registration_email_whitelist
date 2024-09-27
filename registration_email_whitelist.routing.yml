@@ -1,0 +1,7 @@
+registration_email_whitelist.admin.config:
+  path: '/admin/config/registration-email-whitelist'
+  defaults:
+    _title: 'Admin'
+    _form: '\Drupal\registration_email_whitelist\Form\RegistrationEmailWhitelistForm'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,5 @@
+name: 'Registration Email Whitelist'
+type: module
+description: 'This module will keep whitelist of emails available to use during registration'
+package: Custom
+core_version_requirement: ^10 || ^11

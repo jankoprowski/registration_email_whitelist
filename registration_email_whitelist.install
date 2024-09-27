@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Registration Email Whitelist module.
+ */
+function registration_email_whitelist_schema() {
+    $schema['registration_email_whitelist'] = [
+        'description' => 'Store e-mails acceptable during registration.',
+        'fields' => [
+            'id' => [
+                'description' => 'Primary Key id.',
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,                
+            ],
+            'email' => [
+                'description' => 'E-mail address.',
+                'type' => 'varchar_ascii',
+                'length' => 255,
+                'not null' => TRUE,
+            ],
+        ],
+        'primary key' => [
+            'id'
+        ],
+        'unique keys' => [
+            'email' => ['email']
+        ],
+    ];
+
+    return $schema;
+}
