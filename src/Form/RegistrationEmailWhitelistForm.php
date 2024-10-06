@@ -61,11 +61,7 @@ namespace Drupal\registration_email_whitelist\Form {
 
 
         public function delete(array &$form, FormStateInterface $form_state) {
-            $to_delete = array_filter($form_state->getValues()['table'],
-            function($v, $k) {
-                return (string)$k === (string)$v;
-            }, ARRAY_FILTER_USE_BOTH);
-            $to_delete = array_keys($to_delete);
+            $to_delete = $this->idsToDelete($form_state->getValues()['table']);
 
             $connection = \Drupal::database();
 
@@ -78,11 +74,11 @@ namespace Drupal\registration_email_whitelist\Form {
         }
 
         public function validateAdd(array &$form, FormStateInterface $form_state) {
-            $connection = \Drupal::database();
             if (empty($form_state->getValue('email'))) {
                 $form_state->setErrorByName('email', $this->t('E-mail can\'t be empty.'));
             }
-            $email = $connection->query("SELECT email FROM {registration_email_whitelist} WHERE email = :email", [':email' => $form_state->getValue('email')])->fetchField();
+            $email_service = \Drupal::service('registration_email_whitelist.email_service');
+            $email = $email_service->getEmailFromWhitelist($form_state->getValue('email'));
             if ($email === $form_state->getValue('email')) {
                 $form_state->setErrorByName(
                     'message',
@@ -93,22 +89,26 @@ namespace Drupal\registration_email_whitelist\Form {
 
         public function validateDelete(array &$form, FormStateInterface $form_state) {
             
-            $to_delete = array_filter($form_state->getValues()['table'],
-            function($v, $k) {
-                return (string)$k === (string)$v;
-            }, mode: ARRAY_FILTER_USE_BOTH);
-            $to_delete = array_keys($to_delete);
+            $to_delete = $this->idsToDelete($form_state->getValues()['table']);
 
             if (empty($to_delete)) {
                 $form_state->setErrorByName(
                     'message',
                     $this->t('Please select e-mails to delete.'),
                 );
-            }            
+            }
         }
 
 
         public function validateForm(array &$form, FormStateInterface $form_state) {
+        }
+
+        private function idsToDelete(array $table): array {
+            $to_delete = array_filter($table,
+            function($v, $k) {
+                return (string)$k === (string)$v;
+            }, mode: ARRAY_FILTER_USE_BOTH);
+            return array_keys($to_delete);
         }
         
 

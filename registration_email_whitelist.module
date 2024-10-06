@@ -6,11 +6,11 @@
  */
 
 function registration_email_whitelist_validator(&$form, \Drupal\Core\Form\FormState $form_state) {
-    $mail = $form_state->getValue('mail');
+    $email = $form_state->getValue('mail');
 
-    $connection = \Drupal::database();
-    $mail_from_db = $connection->query("SELECT email FROM {registration_email_whitelist} WHERE email = :email", [':email' => $mail])->fetchField();
-    if (empty($mail_from_db)) {
+    $email_service = \Drupal::service('registration_email_whitelist.email_service');
+    $email_from_db = $email_service->getEmailFromWhitelist($email);
+    if (empty($email_from_db)) {
         $form_state->setErrorByName(
             'mail',
             t('E-mail is not on the white list.'),

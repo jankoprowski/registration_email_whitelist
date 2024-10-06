@@ -1,0 +1,4 @@
+services:
+  registration_email_whitelist.email_service:
+    class: 'Drupal\registration_email_whitelist\Service\EmailService'
+    arguments: ['@database']
